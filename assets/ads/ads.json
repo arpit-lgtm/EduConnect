@@ -1,0 +1,12 @@
+[
+  { "id": "admission", "image": "admission.png?refresh=1", "title": "Admission Open", "link": "" },
+  { "id": "referral", "image": "referral.png?refresh=1", "title": "Refer and Earn", "link": "" },
+  { "id": "goldengate", "image": "goldengate.png", "title": "Golden Gate", "link": "https://www.educativo.in/mba_goldengate.html" },
+  { "id": "liverpool", "image": "liverpool.png", "title": "Liverpool", "link": "https://www.educativo.in/mba_liverpool.html" },
+  { "id": "iitbanglore", "image": "iitbanglore.png", "title": "IIT Bangalore", "link": "https://educativo.in/datascience_masterscience.html" },
+  { "id": "opjindal", "image": "opjindal.png", "title": "OP Jindal", "link": "https://www.educativo.in/mba_jindal.html" },
+  { "id": "ssbmuniversity", "image": "ssbmuniversity.png", "title": "SSBM University", "link": "https://www.educativo.in/mba_amity.html" },
+  { "id": "woolfuniversity", "image": "woolfuniversity.png", "title": "Woolf University", "link": "https://educativo.in/software_mastercomputerscience.html" },
+  { "id": "deakin", "image": "deakin.png", "title": "Deakin", "link": "https://www.educativo.in/mba_deakin.html" },
+  { "id": "mituniversity", "image": "mituniversity.png", "title": "MIT University", "link": "https://www.educativo.in/mba_mit.html" }
+]

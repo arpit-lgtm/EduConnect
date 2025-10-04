@@ -1,0 +1,35 @@
+# ninja log v5
+22	194	0	C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/CMakeFiles/cmake.verify_globs	5ac47bf04fe815c4
+65	15349	7812822895961818	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/f13f8dad87d8836f323054e0014d3ca5/jni/react/renderer/components/safeareacontext/EventEmitters.cpp.o	91c6a839b0123b0f
+80	19928	7812822942058444	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/a6f65804b6b57fa969a6d7767383dd1c/cpp/react/renderer/components/safeareacontext/RNCSafeAreaViewState.cpp.o	c365fadf0e60e81c
+20	20446	7812822949174833	CMakeFiles/appmodules.dir/OnLoad.cpp.o	eebfc41972064317
+50	25497	7812822997980097	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/f13f8dad87d8836f323054e0014d3ca5/jni/react/renderer/components/safeareacontext/ComponentDescriptors.cpp.o	7bb5d59ab2d7711e
+35	26163	7812823004426826	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/1e7aaa5214221e7dfad8b5a0057dbd45/renderer/components/safeareacontext/RNCSafeAreaViewShadowNode.cpp.o	44e2ea19e20437bf
+15448	28582	7812823030563581	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/a7a92cfaf0d738674f8a18ff0ca8ae6b/codegen/jni/react/renderer/components/safeareacontext/States.cpp.o	a5b78fd7fadeca81
+20447	41557	7812823158418775	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/a7a92cfaf0d738674f8a18ff0ca8ae6b/codegen/jni/react/renderer/components/safeareacontext/ShadowNodes.cpp.o	74f1fe00c687512e
+25520	42168	7812823164585655	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/1bbd28b1d63ed150dd03ffda39a925aa/renderer/components/safeareacontext/safeareacontextJSI-generated.cpp.o	9767294c09cef6d8
+20028	42365	7812823165475175	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/d8f3076c42bc62230a2621c97378b471/source/codegen/jni/react/renderer/components/safeareacontext/Props.cpp.o	d4f31be61938abc1
+26288	43514	7812823179508066	safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir/776733e0567f028d790174505b63b085/build/generated/source/codegen/jni/safeareacontext-generated.cpp.o	d8ee09944158278e
+43515	45006	7812823193071197	C:/Educativo App/Frontend/android/app/build/intermediates/cxx/Debug/152z4r1m/obj/x86_64/libreact_codegen_safeareacontext.so	3d13e57993dd7756
+6	53371	7812823274180055	CMakeFiles/appmodules.dir/C_/Educativo_App/Frontend/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	b639026b05577fe8
+28583	53603	7812823278557844	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/C_/Educativo_App/Frontend/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGImageShadowNode.cpp.o	91d50d861c71dedc
+42366	61383	7812823356748205	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/a8ace3951f372e7ed5e56499c7edf49c/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGLayoutableShadowNode.cpp.o	ac2798d4b02bd660
+42274	61529	7812823359856619	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/C_/Educativo_App/Frontend/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGImageState.cpp.o	94250ad598403932
+41679	63681	7812823381315747	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/C_/Educativo_App/Frontend/node_modules/react-native-svg/common/cpp/react/renderer/components/rnsvg/RNSVGShadowNodes.cpp.o	9dd6790075cb773e
+45007	72019	7812823462854406	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/rnsvg.cpp.o	7b112dc9fbbcfd35
+53696	75095	7812823494768224	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/c1db1851b1f9d575eae4945f9877ce0b/build/generated/source/codegen/jni/react/renderer/components/rnsvg/EventEmitters.cpp.o	815fbfc02e768000
+53399	80315	7812823545932275	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/10ecf06ce9691b5d1190998cc2fc60f3/generated/source/codegen/jni/react/renderer/components/rnsvg/ComponentDescriptors.cpp.o	1cfb7606d36a8fcf
+63682	81467	7812823557936210	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/c1db1851b1f9d575eae4945f9877ce0b/build/generated/source/codegen/jni/react/renderer/components/rnsvg/rnsvgJSI-generated.cpp.o	b967bf75c55d1211
+61530	83404	7812823577206437	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/5f3770832be9d72fcb33fe1dd1be1d31/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/ShadowNodes.cpp.o	ccfe96fb602e6fb3
+72020	85413	7812823597336227	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/5f3770832be9d72fcb33fe1dd1be1d31/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/States.cpp.o	8003a17a9cbdc5c6
+75096	92446	7812823668640083	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/RNCWebViewSpec-generated.cpp.o	90f5ac68e42a4f6b
+61470	97047	7812823712197996	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/5f3770832be9d72fcb33fe1dd1be1d31/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/Props.cpp.o	38757a5caddcceda
+97118	98322	7812823725891050	C:/Educativo App/Frontend/android/app/build/intermediates/cxx/Debug/152z4r1m/obj/x86_64/libreact_codegen_rnsvg.so	8a99637348cd569a
+85493	102701	7812823769938713	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/RNCWebViewSpecJSI-generated.cpp.o	d9b36ceb72895947
+83436	104929	7812823792647206	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/EventEmitters.cpp.o	8ab139d0335e03a6
+80417	106288	7812823806989928	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ComponentDescriptors.cpp.o	40ec9d7ea6bcd06f
+81498	106665	7812823810947927	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/Props.cpp.o	1aa7b1a75beba18f
+98322	108844	7812823833476502	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/States.cpp.o	585e8557804c37ec
+92447	110704	7812823851934310	RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ShadowNodes.cpp.o	1043aeb72da34288
+110706	111199	7812823856604498	C:/Educativo App/Frontend/android/app/build/intermediates/cxx/Debug/152z4r1m/obj/x86_64/libappmodules.so	56ad2834f525df7a
+6	77	0	C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/CMakeFiles/cmake.verify_globs	5ac47bf04fe815c4

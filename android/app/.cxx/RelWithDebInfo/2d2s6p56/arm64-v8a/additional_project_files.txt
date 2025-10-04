@@ -1,0 +1,7 @@
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\RNCWebViewSpec-generated.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\ComponentDescriptors.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\EventEmitters.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\Props.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\RNCWebViewSpecJSI-generated.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\ShadowNodes.cpp.o
+C:\Educativo App\Frontend\android\app\.cxx\RelWithDebInfo\2d2s6p56\arm64-v8a\RNCWebViewSpec_autolinked_build\CMakeFiles\react_codegen_RNCWebViewSpec.dir\react\renderer\components\RNCWebViewSpec\States.cpp.o

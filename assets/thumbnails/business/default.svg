@@ -1,0 +1,8 @@
+<!-- This is a placeholder SVG file -->
+<svg width="320" height="180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#800020"/>
+  <text x="50%" y="50%" font-family="Arial" font-size="24" fill="white" text-anchor="middle" dominant-baseline="middle">Business</text>
+  <rect x="110" y="70" width="100" height="60" fill="none" stroke="white" stroke-width="2"/>
+  <line x1="110" y1="85" x2="210" y2="85" stroke="white" stroke-width="1"/>
+  <text x="50%" y="70%" font-family="Arial" font-size="14" fill="white" text-anchor="middle" dominant-baseline="middle">Finance</text>
+</svg>

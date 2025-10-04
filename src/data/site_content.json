@@ -1,0 +1,374 @@
+{
+  "navigation": [
+    { "id": "home", "title": "Home", "url": "/" },
+    { "id": "courses", "title": "Courses", "url": "/courses" },
+    { "id": "about", "title": "About Us", "url": "/about" },
+    { "id": "apply", "title": "Apply", "url": "/apply" },
+    { "id": "contact", "title": "Contact", "url": "/contact" },
+    { "id": "privacy", "title": "Privacy Policy", "url": "/privacy" }
+  ],
+  "modules": [
+    {
+      "id": "about",
+      "title": "About Us"
+    },
+    {
+      "id": "courses",
+      "title": "Courses",
+      "domains": [
+        {
+          "id": "mba-programs",
+          "title": "MBA Programs",
+          "items": [
+            { 
+              "title": "MBA - Amity University Online", 
+              "url": "https://www.educativo.in/mba_amity.html", 
+              "subtitle": "Learn from the Faculty of International Repute", 
+              "details": "Amity spans across 11 countries, educating over 175,000 students.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - DY Patil University (Navi Mumbai)", 
+              "url": "https://www.educativo.in/mba_dypatil_salesmarketing.html", 
+              "subtitle": "Executive and 2-year MBA options", 
+              "details": "DY Patil is a member of the Association of Commonwealth Universities.", 
+              "duration": "1-2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - DY Patil University (Pune)", 
+              "url": "https://www.educativo.in/mba_dypatil_pune.html", 
+              "subtitle": "Industry-standard content", 
+              "details": "Learners will get guided on creating an ATS-friendly professional resume.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - MIT University", 
+              "url": "https://www.educativo.in/mba_mit.html", 
+              "subtitle": "Renowned for cutting-edge curriculum and world-class faculty", 
+              "details": "Navigate the future of business in new Bharat as a leader.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Liverpool Business School", 
+              "url": "https://www.educativo.in/mba_liverpool.html", 
+              "subtitle": "Unlock global opportunities", 
+              "details": "Live sessions by industry experts.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Golden Gate University", 
+              "url": "https://www.educativo.in/mba_goldengate.html", 
+              "subtitle": "Cultivate strong business leadership skills in Silicon Valley", 
+              "details": "Amongst top 10% US universities, Ranked #1 for working professionals.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - O.P. Jindal Global University", 
+              "url": "https://www.educativo.in/mba_jindal.html", 
+              "subtitle": "No.1 Pvt. Indian University as per QS World University Rankings", 
+              "details": "Blended learning experience with Live & Recorded Classes.", 
+              "duration": "1 year", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Jain University", 
+              "url": "https://www.educativo.in/mba_jain.html", 
+              "subtitle": "Recognized among the top universities in India", 
+              "details": "NAAC 'A++' Grade Accreditation, Approved by UGC & AICTE.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Chandigarh University", 
+              "url": "https://www.educativo.in/mba_chandigarh.html", 
+              "subtitle": "UGC & AICTE recognized with top-class technology", 
+              "details": "Flexibility to study at any time and from anywhere.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Deakin Business School", 
+              "url": "https://www.educativo.in/mba_deakin.html", 
+              "subtitle": "Boost your business acumen with a Global MBA", 
+              "details": "WES recognized MBA degree from one of Australia's top B-schools.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA - Manipal University", 
+              "url": "https://www.educativo.in/mba_manipal.html", 
+              "subtitle": "Boost your career with UGC-entitled online MBA", 
+              "details": "Comprehensive MBA program from a leading institution.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            }
+          ]
+        },
+        {
+          "id": "data-science-analytics",
+          "title": "Data Science & Analytics",
+          "items": [
+            { 
+              "title": "Master of Science in Data Science - LJMU/IIITB", 
+              "url": "https://educativo.in/datascience_masterscience.html", 
+              "subtitle": "Advanced data science program with international recognition", 
+              "details": "Joint program from Liverpool John Moores University and IIIT Bangalore.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation with mathematics background" 
+            },
+            { 
+              "title": "Post Graduate Programme in Data Science & AI (Executive)", 
+              "url": "https://educativo.in/datascience_postgraduate.html", 
+              "subtitle": "Tailored for working professionals seeking data expertise", 
+              "details": "Learn advanced data analytics while continuing your career.", 
+              "duration": "1 year", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation with work experience" 
+            },
+            { 
+              "title": "Graduate Certificate Programme in Data Science & AI", 
+              "url": "https://www.educativo.in/datascience_graduatecertificate.html", 
+              "subtitle": "Foundational program in data science fundamentals", 
+              "details": "Perfect starting point for professionals transitioning to data science.", 
+              "duration": "6-8 months", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "Doctorate of Business in Generative AI", 
+              "url": "https://educativo.in/datascience_doctorbusiness.html", 
+              "subtitle": "Advanced research program in AI business applications", 
+              "details": "Explore the intersection of business leadership and generative AI technologies.", 
+              "duration": "3-4 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Master's degree with relevant experience" 
+            }
+          ]
+        },
+        {
+          "id": "software-tech",
+          "title": "Software & Tech",
+          "items": [
+            { 
+              "title": "Master of Science in Computer Science - LJMU", 
+              "url": "https://educativo.in/software_masterofscience.html", 
+              "subtitle": "Advanced computer science degree with international recognition", 
+              "details": "Comprehensive program covering advanced algorithms, software engineering, and emerging technologies.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Bachelor's in Computer Science or related field" 
+            },
+            { 
+              "title": "Master's in Computer Science - Woolf/upGrad Tech", 
+              "url": "https://educativo.in/software_mastercomputerscience.html", 
+              "subtitle": "Industry-aligned master's program in computer science", 
+              "details": "Gain expertise in cutting-edge technologies with practical applications.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Bachelor's degree in relevant discipline" 
+            },
+            { 
+              "title": "Doctorate in Software Technology", 
+              "url": "https://educativo.in/software_doctorofbusiness.html", 
+              "subtitle": "Advanced research program in software development", 
+              "details": "Explore innovations in software engineering methodologies and applications.", 
+              "duration": "3-4 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Master's degree in Computer Science or related field" 
+            }
+          ]
+        },
+        {
+          "id": "management",
+          "title": "Management",
+          "items": [
+            { 
+              "title": "Doctorate of Business Administration - ESGCI Paris", 
+              "url": "https://www.educativo.in/management_doctoratebusinsess.html", 
+              "subtitle": "Advanced business leadership from a prestigious European institution", 
+              "details": "Elevate your career with an international doctorate in business administration.", 
+              "duration": "3-4 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Master's degree with work experience" 
+            },
+            { 
+              "title": "Doctor of Business Administration - Golden Gate University", 
+              "url": "https://educativo.in/management_doctorofbusiness.html", 
+              "subtitle": "Prestigious doctorate program from a leading US university", 
+              "details": "Develop advanced research and leadership skills for executive positions.", 
+              "duration": "3-4 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Master's degree with significant work experience" 
+            },
+            { 
+              "title": "Full Stack Development Course", 
+              "url": "https://educativo.in/management_fullstack.html", 
+              "subtitle": "Comprehensive training in end-to-end web development", 
+              "details": "Master front-end and back-end technologies for full-stack development careers.", 
+              "duration": "6-8 months", 
+              "fees": "Contact for details", 
+              "eligibility": "Basic programming knowledge" 
+            }
+          ]
+        },
+        {
+          "id": "ai-ml",
+          "title": "AI & ML",
+          "items": [
+            { 
+              "title": "Master of Science in Machine Learning & AI", 
+              "url": "https://educativo.in/ai_masterofscience.html", 
+              "subtitle": "Advanced degree program in artificial intelligence", 
+              "details": "Comprehensive education in machine learning algorithms and AI systems design.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Bachelor's degree with mathematics background" 
+            },
+            { 
+              "title": "AI & ML Programs Overview", 
+              "url": "https://www.educativo.in/ai_course.html", 
+              "subtitle": "Explore our full range of AI and machine learning courses", 
+              "details": "From beginner to advanced levels, find the right AI/ML program for your career.", 
+              "duration": "Various", 
+              "fees": "Contact for details", 
+              "eligibility": "Various" 
+            }
+          ]
+        },
+        {
+          "id": "marketing",
+          "title": "Marketing",
+          "items": [
+            { 
+              "title": "Job-ready Program in Digital Marketing", 
+              "url": "https://educativo.in/marketing_jobreadyprogram.html", 
+              "subtitle": "Practical digital marketing training for immediate employment", 
+              "details": "Hands-on training in SEO, SEM, social media, and content marketing strategies.", 
+              "duration": "3-6 months", 
+              "fees": "Contact for details", 
+              "eligibility": "Open to all backgrounds" 
+            },
+            { 
+              "title": "MBA in Sales & Marketing - D Y Patil University", 
+              "url": "https://www.educativo.in/mba_dypatil_salesmarketing.html", 
+              "subtitle": "Specialized MBA focusing on sales and marketing strategies", 
+              "details": "Develop expertise in market analysis, consumer behavior, and sales techniques.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA in Retail Management - DY Patil University", 
+              "url": "https://www.educativo.in/mba_dypatil_retailmanagement.html", 
+              "subtitle": "MBA program specializing in retail management", 
+              "details": "Master retail operations, merchandising, and customer experience strategies.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "MBA in Event Management - D Y Patil University", 
+              "url": "https://www.educativo.in/mba_dypatil_eventmanagement.html", 
+              "subtitle": "Specialized MBA for event management professionals", 
+              "details": "Learn event planning, marketing, logistics, and budget management.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            },
+            { 
+              "title": "Marketing Specialization - MIT MBA", 
+              "url": "https://educativo.in/mba_mit.html", 
+              "subtitle": "Marketing track within the MIT MBA program", 
+              "details": "Comprehensive marketing education from a renowned institution.", 
+              "duration": "2 years", 
+              "fees": "Contact for details", 
+              "eligibility": "Graduation" 
+            }
+          ]
+        }
+      ]
+    },
+    { "id": "apply", "title": "Apply", "form": {
+      "fields": [
+        { "name": "firstName", "label": "First Name", "type": "text", "required": true },
+        { "name": "lastName", "label": "Last Name", "type": "text", "required": false },
+        { "name": "email", "label": "Email", "type": "email", "required": true },
+        { "name": "contactNumber", "label": "Contact Number", "type": "tel", "required": false },
+        { "name": "course", "label": "Course", "type": "select", "options": [
+          "MBA - Amity University Online",
+          "MBA - DY Patil University (Navi Mumbai)",
+          "MBA - DY Patil University (Pune)",
+          "MBA - MIT University",
+          "MBA - Liverpool Business School",
+          "MBA - Golden Gate University",
+          "MBA - O.P. Jindal Global University",
+          "MBA - Jain University",
+          "MBA - Chandigarh University",
+          "MBA - Deakin Business School",
+          "MBA - Manipal University",
+          "MSc in Data Science - IIIT Bangalore",
+          "PG Program in Data Analytics - Manipal University",
+          "Advanced Certificate in Data Science - Liverpool John Moores University",
+          "PG Diploma in Software Development - IIIT Bangalore",
+          "Advanced Certificate in Full Stack Development - Jain University",
+          "BTech in Computer Science - MIT University",
+          "BBA - Amity University Online",
+          "Executive PG Program in Management - XLRI Jamshedpur",
+          "Certificate in Strategic Management - O.P. Jindal Global University",
+          "PG Program in Artificial Intelligence - IIIT Bangalore",
+          "Advanced Certificate in Machine Learning - Manipal University",
+          "PG Diploma in Digital Marketing - Manipal University",
+          "Advanced Certificate in Brand Management - Jain University",
+          "MBA in Marketing - DY Patil University"
+        ], "required": false }
+      ],
+      "submitLabel": "Apply Now"
+    } },
+    { "id": "contact", "title": "Contact", "content": "Email: info@educativo.in\nPhone: +91 9076 114 175\nAddress: Mumbai, India" },
+    { "id": "privacy", "title": "Privacy Policy", "content": "At Educativo, we value your privacy and are committed to protecting your personal information. Any details you share with us, such as name, email, or phone number, are used only to provide you with information, counselling, and support related to our courses and services.\n\nWe do not sell, share, or rent your data to third parties. Your information is stored securely and used strictly for communication and guidance purposes.\n\nBy submitting your details, you agree to be contacted by our counsellors through phone, email, or WhatsApp regarding course updates and admission assistance." }
+  ],
+  "home": {
+    "hero": {
+      "title": "Unlock your potential with our Online Programs!",
+      "subtitle": "500+ Courses · 50+ Specialisations · Learn with leading universities",
+      "ctaPrimary": "Explore Courses",
+      "ctaSecondary": "Get In Touch"
+    },
+    "features": [
+      { "icon": "cost", "title": "Cost-Effective", "desc": "Online programs are more affordable." },
+      { "icon": "ease", "title": "Ease of Learning", "desc": "Flexible schedules and self-paced learning for working professionals." },
+      { "icon": "diversity", "title": "Diversity of Programs", "desc": "Wide range of specializations and universities to choose from." },
+      { "icon": "equivalent", "title": "Equivalent to Offline", "desc": "Online degrees are recognized and valued by employers." }
+    ],
+    "achievements": [
+      { "icon": "students", "label": "STUDENTS", "count": "10,000+" },
+      { "icon": "counsellors", "label": "COUNSELLORS", "count": "100+" },
+      { "icon": "courses", "label": "COURSES", "count": "500+" }
+    ],
+    "partners": ["Amity","DY Patil","MIT Pune","Manipal","Liverpool","Golden Gate","Jindal","Jain","Chandigarh","Deakin","ISB","IIIT Bangalore","XLRI Jamshedpur"],
+    "faq": [
+      { "q": "Is online MBA as good as regular MBA?", "a": "Absolutely. Online MBAs have gained widespread recognition and credibility." },
+      { "q": "Can an online MBA get placements?", "a": "Yes, online MBAs offer placement support and are valued by employers." },
+      { "q": "Are the degrees UGC/AICTE approved?", "a": "Yes, all our partner universities offer UGC/AICTE approved programs." },
+      { "q": "How are exams conducted?", "a": "Exams are conducted either online through proctored systems or at designated exam centers." }
+    ]
+  }
+}

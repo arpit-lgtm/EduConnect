@@ -1,0 +1,12 @@
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/CMakeFiles/appmodules.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/CMakeFiles/edit_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/CMakeFiles/rebuild_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/rnsvg_autolinked_build/CMakeFiles/edit_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/rnsvg_autolinked_build/CMakeFiles/rebuild_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/edit_cache.dir
+C:/Educativo App/Frontend/android/app/.cxx/Debug/152z4r1m/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/rebuild_cache.dir

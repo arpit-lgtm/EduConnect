@@ -40,13 +40,11 @@ jobs:
           xcodebuild -version
           V=$(xcodebuild -version | awk '/Xcode/ {print $2}')
           echo "Detected Xcode $V"
-          if python3 - <<'EOF'
-import re, subprocess, pathlib
-out = subprocess.check_output(['xcodebuild','-version']).decode()
-ver = re.search(r'Xcode (\d+\.\d+)', out).group(1)
-print(ver)
-EOF
-          | awk '{ if ($1 < 16.1) print "PATCH"; else print "OK"; }' | grep PATCH >/dev/null; then
+          
+          # Check if Xcode version is less than 16.1 using bash arithmetic
+          MAJOR=$(echo $V | cut -d. -f1)
+          MINOR=$(echo $V | cut -d. -f2)
+          if [ $MAJOR -lt 16 ] || ([ $MAJOR -eq 16 ] && [ $MINOR -lt 1 ]); then
             echo "Xcode <16.1 detected, applying temporary RN version check bypass";
             UTIL_FILE=node_modules/react-native/scripts/cocoapods/utils.rb
             if [ -f "$UTIL_FILE" ]; then

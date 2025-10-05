@@ -58,8 +58,21 @@ jobs:
           
           echo "=== BUILD FAILURE DETECTED - Check the Build Archive step output above for specific errors ==="
     
-      - name: Upload Archive
+      - name: List Build Outputs
+        run: |
+          cd ios
+          echo "=== BUILD OUTPUT DIRECTORY STRUCTURE ==="
+          find . -name "*.app" -o -name "*.xcarchive" -o -name "*.ipa" | head -20
+          echo "=== DERIVED DATA PRODUCTS ==="
+          find ~/Library/Developer/Xcode/DerivedData -name "*.app" 2>/dev/null | head -10 || echo "DerivedData not accessible"
+          echo "=== WORKSPACE BUILD DIRECTORY ==="
+          ls -la build/ 2>/dev/null || echo "No build directory"
+          
+      - name: Upload Build Products
         uses: actions/upload-artifact@v4
         with:
-          name: ios-nuclear-build
-          path: ios/EduConnect.xcarchive
+          name: ios-nuclear-build-products
+          path: |
+            ios/build/
+            ~/Library/Developer/Xcode/DerivedData/**/Build/Products/**/EduConnect.app
+        if-no-files-found: warn

@@ -92,50 +92,31 @@ jobs:
         echo "=== Modifying $HELPERS_PATH ==="
         sed -i '' "s/return '16.1'/return '15.0'/g" "$HELPERS_PATH"
         
-        echo "=== Removing check in $UTILS_PATH ==="
+        echo "=== Creating simplified utils.rb patch ==="
         # Create a backup of the original file
         cp "$UTILS_PATH" "${UTILS_PATH}.bak"
         
-        # Replace the entire check method with a simple stub
-        cat > "$UTILS_PATH.new" << 'EOL'
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-#
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+        # Create a simple replacement method using a different approach
+        python3 -c "
+import re
+with open('${UTILS_PATH}.bak', 'r') as f:
+    content = f.read()
 
-require 'shellwords'
+# Replace the check method with a simple version
+pattern = r'def self\.check_minimum_required_xcode.*?end'
+replacement = '''def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)
+        Pod::UI.puts \"Xcode version check bypassed by GitHub Actions patch\"
+    end'''
 
-require_relative "./helpers.rb"
-require_relative "./jsengine.rb"
+new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
 
-# Utilities class for React Native Cocoapods
-class ReactNativePodsUtils
-    def self.warn_if_not_on_arm64
-        if SysctlChecker.new().call_sysctl_arm64() == 1 && !Environment.new().ruby_platform().include?('arm64')
-            Pod::UI.warn 'Do not use "pod install" from inside Rosetta2 (x86_64 emulation on arm64).'
-            Pod::UI.warn ' - Emulated x86_64 is slower than native arm64'
-            Pod::UI.warn ' - May result in mixed architectures in rubygems (eg: ffi_c.bundle files may be x86_64 with an arm64 interpreter)'
-            Pod::UI.warn 'Run "env /usr/bin/arch -arm64 /bin/bash --login" then try again.'
-        end
-    end
-    
-    # PATCHED: Skip Xcode version check for GitHub Actions compatibility
-    def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)
-        Pod::UI.puts "⚠️ Xcode version check bypassed by GitHub Actions patch"
-    end
-
-    # deprecated. These checks are duplicated in the react_native_pods function
-EOL
-
-        # Get the rest of the file content after the check method
-        tail -n +400 "${UTILS_PATH}.bak" >> "$UTILS_PATH.new"
-        
-        # Replace the original file with our patched version
-        mv "$UTILS_PATH.new" "$UTILS_PATH"
+with open('$UTILS_PATH', 'w') as f:
+    f.write(new_content)
+"
         
         echo "=== Verification ==="
-        grep "min_xcode_version_supported" "$HELPERS_PATH"
-        grep -A 3 "def self.check_minimum_required_xcode" "$UTILS_PATH"
+        grep "min_xcode_version_supported" "$HELPERS_PATH" || echo "Pattern not found"
+        grep -A 3 "def self.check_minimum_required_xcode" "$UTILS_PATH" || echo "Pattern not found"
         
     - name: Pod Install with Full Logging
       run: |

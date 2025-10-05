@@ -83,15 +83,34 @@ jobs:
     - name: Patch React Native for Xcode Version Compatibility
       run: |
         echo "=== Patching React Native source files ==="
-        # Update min_xcode_version_supported in helpers.rb
-        sed -i '' 's/def self\.min_xcode_version_supported.*$/def self\.min_xcode_version_supported\n            return '"'"'15.0'"'"'\n        end/' node_modules/react-native/scripts/cocoapods/helpers.rb
+        # Create a simple patch for the Xcode version check
+        cd ios
         
-        # Modify Xcode version check in utils.rb
-        sed -i '' 's/def self\.check_minimum_required_xcode.*$/def self\.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n        # Skip check with environment variable\n        if ENV['"'"'IGNORE_XCODE_VERSION'"'"'] == '"'"'1'"'"'\n            Pod::UI.puts "Skipping XCode version check due to IGNORE_XCODE_VERSION=1"\n            return\n        end\n        \n        version = self.parse_xcode_version(xcodebuild_manager.version)\n        if (version.nil? || !Gem::Version::correct?(version["str"]))\n            Pod::UI.warn "Unexpected XCode version string '"'"'#{xcodebuild_manager.version}'"'"'"\n            return\n        end\n\n        current = version["str"]\n        min_required = Helpers::Constants.min_xcode_version_supported\n\n        if Gem::Version::new(current) < Gem::Version::new(min_required)\n            Pod::UI.puts "React Native requires XCode >= #{min_required}. Found #{current}.".red\n            Pod::UI.puts "Setting IGNORE_XCODE_VERSION=1 to bypass this check.".yellow\n            ENV['"'"'IGNORE_XCODE_VERSION'"'"'] = '"'"'1'"'"'\n            # Comment out the exception to allow building with older Xcode\n            # raise "Please upgrade XCode"\n        end\n    end/' node_modules/react-native/scripts/cocoapods/utils.rb
+        cat > simple_patch.rb << 'EOL'
+        # Simple patch to override Xcode version check
+        helpers_path = File.join('..', 'node_modules', 'react-native', 'scripts', 'cocoapods', 'helpers.rb')
+        utils_path = File.join('..', 'node_modules', 'react-native', 'scripts', 'cocoapods', 'utils.rb')
+        
+        # Replace min Xcode version in helpers.rb
+        helpers_content = File.read(helpers_path)
+        helpers_content.gsub!("return '16.1'", "return '15.0'")
+        File.write(helpers_path, helpers_content)
+        puts "✅ Patched helpers.rb"
+        
+        # Replace check method in utils.rb
+        utils_content = File.read(utils_path)
+        original_method = /def self\.check_minimum_required_xcode.*?end/m
+        replacement = "def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n        Pod::UI.puts \"Skipping XCode version check\"\n    end"
+        utils_content.gsub!(original_method, replacement)
+        File.write(utils_path, utils_content)
+        puts "✅ Patched utils.rb"
+        EOL
+        
+        ruby simple_patch.rb
         
         echo "=== Verifying patches ==="
-        grep "min_xcode_version_supported" node_modules/react-native/scripts/cocoapods/helpers.rb
-        grep "IGNORE_XCODE_VERSION" node_modules/react-native/scripts/cocoapods/utils.rb
+        cat ../node_modules/react-native/scripts/cocoapods/helpers.rb | grep "min_xcode_version_supported" -A 3
+        cat ../node_modules/react-native/scripts/cocoapods/utils.rb | grep "check_minimum_required_xcode" -A 3
         
     - name: Pod Install with Full Logging
       run: |

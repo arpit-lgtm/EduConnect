@@ -127,7 +127,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa-file
+          if-no-files-found: warn
+          retention-days: 5
           path: |
             ios/export/*.ipa
             ios/EduConnect.xcarchive
-        if-no-files-found: warn
+            ios/export/Payload/EduConnect.app
+            ios/build/Build/Products/Release-iphoneos/EduConnect.app

@@ -1,26 +1,48 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'
 
 
-
-platform :ios, '13.4'require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-
-
-
-target 'EduConnect' doplatform :ios, '13.4'
-
-  config = use_native_modules!
 
 platform :ios, '13.4'
 
+
+
+target 'EduConnect' doplatform :ios, '13.4'require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+  config = use_native_modules!
+
+
+
   use_react_native!(
 
-    :path => config[:reactNativePath],target 'EduConnect' do
+    :path => config[:reactNativePath],target 'EduConnect' doplatform :ios, '13.4'
 
     :hermes_enabled => true,
 
-    :fabric_enabled => falsetarget 'EduConnect' do  config = use_native_modules!
+    :fabric_enabled => false  config = use_native_modules!
 
   )
+
+platform :ios, '13.4'
+
+  post_install do |installer|
+
+    react_native_post_install(installer)  use_react_native!(
+
+    
+
+    installer.pods_project.targets.each do |target|    :path => config[:reactNativePath],target 'EduConnect' do
+
+      target.build_configurations.each do |config|
+
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'    :hermes_enabled => true,
+
+      end
+
+    end    :fabric_enabled => falsetarget 'EduConnect' do  config = use_native_modules!
+
+  end
+
+end  )
 
   config = use_native_modules!
 

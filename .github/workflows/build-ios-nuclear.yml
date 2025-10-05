@@ -1,4 +1,4 @@
-name: iOS Nuclear Build
+name: iOS Nuclear Build v2
 
 on:
   push:

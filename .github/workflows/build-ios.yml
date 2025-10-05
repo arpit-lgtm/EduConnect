@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-13  # Use older macOS with Xcode 15.x for React Native 0.81.4 compatibility
+    runs-on: macos-14  # Xcode 16 on macOS 14, matches RN 0.81.4 requirement
     
     steps:
     - name: Checkout code
@@ -52,14 +52,7 @@ jobs:
           echo "❌ react_native_pods.rb missing"
           exit 1
         fi
-    - name: Patch React Native Xcode Requirement
-      run: |
-        echo "=== Patching React Native Xcode requirement ==="
-        ruby scripts/patch_xcode_version.rb || { echo "Patch script failed"; cat scripts/patch_xcode_version.rb; exit 1; }
-        echo "--- helpers.rb excerpt ---"
-        grep -n "min_xcode_version_supported" node_modules/react-native/scripts/cocoapods/helpers.rb || true
-        echo "--- utils.rb excerpt ---"
-        grep -n "check_minimum_required_xcode" node_modules/react-native/scripts/cocoapods/utils.rb || true
+    # Removed custom patching – relying on proper Xcode version instead
     
     - name: Ruby Environment Setup
       run: |
@@ -89,54 +82,11 @@ jobs:
         cat Podfile
         
         
-    - name: Pod Install with Full Logging
+    - name: Pod Install
       run: |
         cd ios
-        echo "=== Cleaning Pod Cache ==="
-        pod cache clean --all
-        rm -rf ~/Library/Caches/CocoaPods
-        rm -rf Pods Podfile.lock
-        echo "=== Xcode Setup ==="
-        export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
-        xcodebuild -version
-        echo "=== Updating Pod Repo ==="
-        pod repo update 2>&1 | tee ../pod-repo-update.log
-        echo "=== Checking Podfile Syntax ==="
-        ruby -c Podfile
-        echo "=== Setting RCT_METRO_PORT for React Native 0.81.4 ==="
-        export RCT_METRO_PORT=8081
-        export RCT_NEW_ARCH_ENABLED=0
-        export SKIP_BUNDLING=1
-        echo "=== Setting environment variables to bypass Xcode version check ==="
-        export IGNORE_XCODE_VERSION=1
-        
-        echo "=== Running Pod Install (Attempt 1) ==="
-        set +e  # Don't exit on error yet
-        pod install --verbose 2>&1 | tee ../pod-install.log
-        POD_EXIT_CODE=$?
-        
-        if [ $POD_EXIT_CODE -eq 0 ] && [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
-          echo "✅ Pod install succeeded"
-        else
-          echo "❌ Pod install failed (exit code: $POD_EXIT_CODE)"
-          echo "=== Trying with deployment target override ==="
-          export IPHONEOS_DEPLOYMENT_TARGET="13.4"
-          pod install --repo-update --verbose 2>&1 | tee ../pod-install-alt.log
-          ALT_EXIT_CODE=$?
-          
-          if [ $ALT_EXIT_CODE -eq 0 ] && [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
-            echo "✅ Alternative pod install succeeded"
-          else
-            echo "❌ Both pod install attempts failed"
-            echo "=== Pod Install Log ==="
-            cat ../pod-install.log
-            echo "=== Alternative Pod Install Log ==="
-            cat ../pod-install-alt.log
-            exit 1
-          fi
-        fi
-        echo "=== Post Pod Install Directory ==="
-        ls -la
+        echo "=== Installing Pods ==="
+        pod install --verbose
         
     - name: Xcode Workspace Verification
       run: |
@@ -205,9 +155,6 @@ jobs:
         name: ios-build-logs
         path: |
           npm-install.log
-          cocoapods-install.log
-          pod-repo-update.log
-          pod-install.log
           xcode-clean.log
           xcode-build.log
         retention-days: 7

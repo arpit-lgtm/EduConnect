@@ -1,57 +1,18 @@
-# Podfile for React Native 0.81.4 with Xcode 15.4 compatibility
-# Set environment variable for patching
-ENV['IGNORE_XCODE_VERSION'] = '1'
-
-# Standard Podfile for React Native
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 
-platform :ios, '13.4'
-install! 'cocoapods', :deterministic_uuids => false
+platform :ios, '15.1'
 
 target 'EduConnect' do
   config = use_native_modules!
 
-  # Override Xcode version check for React Native 0.81.4 compatibility
-  ENV['RCT_NEW_ARCH_ENABLED'] = '0'
-  ENV['RCT_METRO_PORT'] = '8081'
-  ENV['IGNORE_XCODE_VERSION'] = '1' # Bypass Xcode version check
-
   use_react_native!(
     :path => config[:reactNativePath],
-    # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false,
+    :hermes_enabled => true,
     :fabric_enabled => false,
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   post_install do |installer|
-    react_native_post_install(
-      installer,
-      # Set "mac_catalyst_enabled" to "true" in order to apply patches
-      # necessary for Mac Catalyst builds
-      :mac_catalyst_enabled => false
-    )
-    
-    # Fix deployment targets for all pods including generated ones
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
-        
-        # Additional fixes for React Native 0.81.4 compatibility
-        config.build_settings['DEAD_CODE_STRIPPING'] = 'YES'
-        config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', '$(SDKROOT)/usr/lib/swift']
-        
-        # Fix for generated dependencies
-        if target.name.include?('ReactAppDependencyProvider') || target.name.include?('ReactCodegen')
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
-        end
-      end
-    end
-    
-    # Ensure main project deployment target consistency
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
-    end
+    react_native_post_install(installer, :mac_catalyst_enabled => false)
   end
 end

@@ -1,5 +1,8 @@
 # React Native
 node_modules/
+!scripts/patch_xcode_version.rb
+node_modules/react-native/scripts/cocoapods/helpers.rb
+node_modules/react-native/scripts/cocoapods/utils.rb
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

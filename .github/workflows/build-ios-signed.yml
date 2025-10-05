@@ -1,0 +1,205 @@
+name: iOS Signed Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Distribution method (development | ad-hoc | app-store)"
+        required: true
+        default: "development"
+      bump_build:
+        description: "Auto increment CFBundleVersion"
+        required: false
+        default: "true"
+
+jobs:
+  build-signed:
+    runs-on: macos-latest
+    env:
+      KEYCHAIN: build.keychain
+      EXPORT_METHOD: ${{ github.event.inputs.build_type }}
+      APP_SCHEME: EduConnect
+      WORKSPACE: EduConnect.xcworkspace
+      ARCHIVE_PATH: EduConnectSigned.xcarchive
+      EXPORT_PATH: export
+      IPA_NAME: EduConnect-signed.ipa
+      # Provided via secrets: APPLE_TEAM_ID, APPLE_CERT_P12_BASE64, APPLE_CERT_PASSWORD, APPLE_PROVISIONING_PROFILE_BASE64, PROVISIONING_PROFILE_NAME
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Preflight / resolve bundle id
+        id: preflight
+        run: |
+          echo "--- Preflight ---"
+          missing=0
+          req=(APPLE_TEAM_ID APPLE_CERT_P12_BASE64 APPLE_CERT_PASSWORD APPLE_PROVISIONING_PROFILE_BASE64 PROVISIONING_PROFILE_NAME KEYCHAIN_PASSWORD)
+          for k in "${req[@]}"; do
+            if [ -z "${!k}" ]; then
+              echo "::warning:: Secret $k not set"; missing=1; fi; done
+          # derive bundle id from build settings
+          BUNDLE_ID=$(xcodebuild -showBuildSettings -workspace "$WORKSPACE" -scheme "$APP_SCHEME" 2>/dev/null | awk -F= '/PRODUCT_BUNDLE_IDENTIFIER/ {gsub(/ /,"",$2); print $2; exit}')
+          if [ -z "$BUNDLE_ID" ]; then echo "::error:: Could not resolve PRODUCT_BUNDLE_IDENTIFIER"; exit 1; fi
+          echo "Resolved bundle id: $BUNDLE_ID"
+          echo "BUNDLE_ID=$BUNDLE_ID" >> $GITHUB_ENV
+          if [ $missing -eq 1 ]; then
+            echo "SECRETS_AVAILABLE=0" >> $GITHUB_ENV
+            echo "::warning:: Missing signing secrets. Will build UNSIGNED IPA shell.";
+          else
+            echo "SECRETS_AVAILABLE=1" >> $GITHUB_ENV
+          fi
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          PROVISIONING_PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JS Dependencies
+        run: npm install
+
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+
+      - name: Pod Install
+        run: |
+          cd ios
+          pod install
+
+      - name: Prepare Build Number (optional)
+        if: ${{ github.event.inputs.bump_build == 'true' }}
+        run: |
+          cd ios
+          PLIST=EduConnect/Info.plist
+          BUILD_NUM=$(PlistBuddy -c 'Print CFBundleVersion' "$PLIST" 2>/dev/null || echo 1)
+          NEXT=$((BUILD_NUM+1))
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEXT" "$PLIST"
+          echo "New CFBundleVersion=$NEXT"
+
+      - name: Create temporary keychain
+        if: env.SECRETS_AVAILABLE == '1'
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+
+      - name: Import signing certificate
+        if: env.SECRETS_AVAILABLE == '1'
+        run: |
+          echo "$APPLE_CERT_P12_BASE64" | base64 --decode > cert.p12
+          security import cert.p12 -k "$KEYCHAIN" -P "$APPLE_CERT_PASSWORD" -A
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security find-identity -v -p codesigning "$KEYCHAIN" || true
+        env:
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+      - name: Install provisioning profile
+        if: env.SECRETS_AVAILABLE == '1'
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$APPLE_PROVISIONING_PROFILE_BASE64" | base64 --decode > profile.mobileprovision
+          UUID=$(grep -a -o '[-A-F0-9]\{36\}' profile.mobileprovision | head -1)
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
+          echo "PROFILE_UUID=$UUID" >> $GITHUB_ENV
+        env:
+          APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+
+      - name: Build archive
+        working-directory: ios
+        run: |
+          if [ "${SECRETS_AVAILABLE}" = "1" ]; then
+            echo "Building SIGNED archive";
+            xcodebuild archive \
+              -workspace "$WORKSPACE" \
+              -scheme "$APP_SCHEME" \
+              -configuration Release \
+              -archivePath "$ARCHIVE_PATH" \
+              DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
+              PROVISIONING_PROFILE_SPECIFIER=${{ secrets.PROVISIONING_PROFILE_NAME }} \
+              CODE_SIGN_STYLE=Manual \
+              CODE_SIGNING_ALLOWED=YES \
+              ONLY_ACTIVE_ARCH=NO \
+              SKIP_INSTALL=NO \
+              BUILD_LIBRARY_FOR_DISTRIBUTION=NO | xcpretty || exit 1
+          else
+            echo "Building UNSIGNED archive (no secrets)";
+            xcodebuild archive \
+              -workspace "$WORKSPACE" \
+              -scheme "$APP_SCHEME" \
+              -configuration Release \
+              -archivePath "$ARCHIVE_PATH" \
+              CODE_SIGNING_ALLOWED=NO \
+              CODE_SIGNING_REQUIRED=NO \
+              ONLY_ACTIVE_ARCH=NO \
+              SKIP_INSTALL=NO \
+              BUILD_LIBRARY_FOR_DISTRIBUTION=NO | xcpretty || exit 1
+          fi
+
+      - name: Create ExportOptions.plist
+        working-directory: ios
+        run: |
+          if [ "${SECRETS_AVAILABLE}" = "1" ]; then
+          cat > ExportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>${EXPORT_METHOD}</string>
+            <key>teamID</key><string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>${BUNDLE_ID}</key><string>${{ secrets.PROVISIONING_PROFILE_NAME }}</string>
+            </dict>
+            <key>signingStyle</key><string>manual</string>
+            <key>stripSwiftSymbols</key><true/>
+            <key>compileBitcode</key><false/>
+          </dict>
+          </plist>
+          EOF
+          else
+            echo "No signing secrets; creating placeholder export dir";
+            mkdir -p "$EXPORT_PATH";
+          fi
+
+      - name: Export IPA
+        working-directory: ios
+        run: |
+          if [ "${SECRETS_AVAILABLE}" = "1" ]; then
+            xcodebuild -exportArchive \
+              -archivePath "$ARCHIVE_PATH" \
+              -exportPath "$EXPORT_PATH" \
+              -exportOptionsPlist ExportOptions.plist | xcpretty || exit 1
+          else
+            echo "Manual unsigned IPA packaging";
+            APP_PATH=$(find "$ARCHIVE_PATH" -name "*.app" -type d | head -1)
+            if [ -z "$APP_PATH" ]; then echo "::error:: .app not found in archive"; exit 1; fi
+            mkdir -p "$EXPORT_PATH/Payload"
+            cp -R "$APP_PATH" "$EXPORT_PATH/Payload/"
+            (cd "$EXPORT_PATH" && zip -r "$IPA_NAME" Payload >/dev/null)
+          fi
+          ls -la "$EXPORT_PATH"
+
+      - name: Upload signed IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-signed-ipa
+          path: |
+            ios/export/*.ipa
+            ios/${{ env.ARCHIVE_PATH }}
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Clean up keychain
+        if: always()
+        run: |
+          if [ "${SECRETS_AVAILABLE}" = "1" ]; then security delete-keychain "$KEYCHAIN" || true; else echo "No keychain to clean"; fi

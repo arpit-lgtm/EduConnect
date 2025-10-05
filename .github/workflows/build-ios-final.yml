@@ -1,10 +1,10 @@
-name: Build iOS App (Final)
+name: Build iOS App (Final) (DISABLED)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ disabled ]  # Changed to prevent triggering
   pull_request:
-    branches: [ main ]
+    branches: [ disabled ]  # Changed to prevent triggering
 
 jobs:
   build-ios:

@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-14  # Latest macOS with Xcode 15
+    runs-on: macos-13  # Use older macOS with Xcode 15.x for React Native 0.81.4 compatibility
     
     steps:
     - name: Checkout code
@@ -91,6 +91,10 @@ jobs:
         pod repo update 2>&1 | tee ../pod-repo-update.log
         echo "=== Checking Podfile Syntax ==="
         ruby -c Podfile
+        echo "=== Setting RCT_METRO_PORT for React Native 0.81.4 ==="
+        export RCT_METRO_PORT=8081
+        export RCT_NEW_ARCH_ENABLED=0
+        export SKIP_BUNDLING=1
         echo "=== Running Pod Install (Attempt 1) ==="
         set +e  # Don't exit on error yet
         pod install --verbose 2>&1 | tee ../pod-install.log
@@ -100,7 +104,9 @@ jobs:
           echo "✅ Pod install succeeded"
         else
           echo "❌ Pod install failed (exit code: $POD_EXIT_CODE)"
-          echo "=== Trying alternative approach ==="
+          echo "=== Trying with Xcode version override ==="
+          export DEVELOPER_DIR="/Applications/Xcode_15.4.app/Contents/Developer"
+          export XCODE_VERSION_OVERRIDE="15.4"
           pod install --repo-update --verbose 2>&1 | tee ../pod-install-alt.log
           ALT_EXIT_CODE=$?
           

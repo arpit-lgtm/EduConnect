@@ -28,61 +28,33 @@ jobs:
     - name: Install iOS dependencies
       run: |
         cd ios
-        pod install
+        pod install --repo-update
     
-    - name: Build iOS
+    - name: Build iOS App
       run: |
-        set +e
-        echo "🔨 Starting iOS build..."
-        
-        # Try React Native CLI first
-        export CLANG_WARN_DEPRECATED_DECLARATIONS=NO
-        export GCC_TREAT_WARNINGS_AS_ERRORS=NO
-        export WARNING_CFLAGS="-w"
-        npx react-native build-ios --mode Release --extra-params "CODE_SIGNING_ALLOWED=NO" --extra-params "GCC_TREAT_WARNINGS_AS_ERRORS=NO" --extra-params "WARNING_CFLAGS=-w" 2>&1 | tee build.log
-        BUILD_EXIT_CODE=$?
-        echo "React Native CLI completed with exit code: $BUILD_EXIT_CODE"
-        
-        # Check if the app was actually built successfully
-        if [ -d "ios/build/Build/Products/Release-iphoneos/EduConnect.app" ]; then
-          echo "✅ iOS app built successfully with React Native CLI!"
-          ls -la "ios/build/Build/Products/Release-iphoneos/EduConnect.app"
-          exit 0
-        fi
-        
-        # Try direct xcodebuild as fallback
-        echo "🔄 Trying direct xcodebuild..."
         cd ios
-        xcodebuild -workspace EduConnect.xcworkspace -scheme EduConnect -configuration Release -destination generic/platform=iOS build CODE_SIGNING_ALLOWED=NO GCC_TREAT_WARNINGS_AS_ERRORS=NO WARNING_CFLAGS=-w
-        XCODE_EXIT_CODE=$?
-        echo "Xcodebuild completed with exit code: $XCODE_EXIT_CODE"
-        
-        # Check for any .app bundle
-        if find "build/Build/Products/Release-iphoneos" -name "*.app" -type d 2>/dev/null | grep -q .; then
-          echo "✅ Found iOS app bundle!"
-          ls -la build/Build/Products/Release-iphoneos/
-          exit 0
-        fi
-        
-        echo "❌ iOS app build failed with both methods"
-        echo "Build log contents:"
-        tail -50 ../build.log 2>/dev/null || echo "No build log available"
-        exit 1
+        xcodebuild -workspace EduConnect.xcworkspace \
+                   -scheme EduConnect \
+                   -configuration Release \
+                   -destination generic/platform=iOS \
+                   -archivePath EduConnect.xcarchive \
+                   archive \
+                   CODE_SIGNING_ALLOWED=NO
     
-    - name: Upload iOS build
+    - name: Export Archive
+      run: |
+        cd ios
+        if [ -d "EduConnect.xcarchive" ]; then
+          echo "✅ iOS archive created successfully!"
+          ls -la EduConnect.xcarchive/
+        else
+          echo "❌ iOS archive not found"
+          exit 1
+        fi
+      
+    - name: Upload iOS Archive
       uses: actions/upload-artifact@v4
       with:
-        name: ios-build
-        path: |
-          ios/build/Build/Products/Release-iphoneos/EduConnect.app
-          ios/build/Build/Products/Release-iphoneos/EduConnect.app.dSYM
-          ios/build/Build/Products/Release-iphoneos/
-        if-no-files-found: warn
-      
-    - name: List build outputs
-      run: |
-        echo "=== Build directory structure ==="
-        find ios/build -name "*.app" -o -name "*.ipa" -o -name "*.dSYM" 2>/dev/null || echo "No build outputs found"
-        
-        echo "=== Release-iphoneos directory ==="
-        ls -la ios/build/Build/Products/Release-iphoneos/ 2>/dev/null || echo "Release-iphoneos directory not found"
+        name: ios-archive
+        path: ios/EduConnect.xcarchive
+        if-no-files-found: error

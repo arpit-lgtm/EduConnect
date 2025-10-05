@@ -8,10 +8,11 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-14  # Latest macOS with Xcode 15
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -19,42 +20,86 @@ jobs:
         node-version: '18'
         cache: 'npm'
     
-    - name: Install dependencies
-      run: npm install
+    - name: Install Node dependencies
+      run: |
+        npm install
+        npm list react-native
+    
+    - name: Setup Ruby and Bundler
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
+        bundler-cache: true
+        working-directory: ios
     
     - name: Install CocoaPods
-      run: sudo gem install cocoapods
-    
-    - name: Install iOS dependencies
       run: |
         cd ios
-        pod install --repo-update
-    
-    - name: Build iOS App
+        gem install cocoapods
+        pod --version
+        
+    - name: Clean and Install iOS dependencies
       run: |
         cd ios
-        xcodebuild -workspace EduConnect.xcworkspace \
-                   -scheme EduConnect \
-                   -configuration Release \
-                   -destination generic/platform=iOS \
-                   -archivePath EduConnect.xcarchive \
-                   archive \
-                   CODE_SIGNING_ALLOWED=NO
-    
-    - name: Export Archive
+        rm -rf Pods Podfile.lock
+        pod repo update
+        pod install --verbose
+        ls -la
+        
+    - name: List Xcode versions
+      run: |
+        xcodebuild -version
+        xcrun simctl list runtimes
+        
+    - name: Build iOS App (Archive)
       run: |
         cd ios
-        if [ -d "EduConnect.xcarchive" ]; then
-          echo "✅ iOS archive created successfully!"
-          ls -la EduConnect.xcarchive/
+        xcodebuild clean \
+                  -workspace EduConnect.xcworkspace \
+                  -scheme EduConnect \
+                  -configuration Release
+                  
+        xcodebuild archive \
+                  -workspace EduConnect.xcworkspace \
+                  -scheme EduConnect \
+                  -configuration Release \
+                  -destination generic/platform=iOS \
+                  -archivePath ./build/EduConnect.xcarchive \
+                  CODE_SIGNING_ALLOWED=NO \
+                  CODE_SIGNING_REQUIRED=NO \
+                  CODE_SIGN_IDENTITY="" \
+                  PROVISIONING_PROFILE="" \
+                  DEVELOPMENT_TEAM="" \
+                  | tee build.log
+    
+    - name: Verify Build Output
+      run: |
+        cd ios
+        if [ -d "./build/EduConnect.xcarchive" ]; then
+          echo "✅ iOS Archive created successfully!"
+          ls -la ./build/EduConnect.xcarchive/
+          find ./build/EduConnect.xcarchive -name "*.app" -exec ls -la {} \;
         else
-          echo "❌ iOS archive not found"
+          echo "❌ iOS Archive not found. Build may have failed."
+          echo "=== Build Log (last 100 lines) ==="
+          tail -100 build.log || echo "No build log found"
+          echo "=== Workspace contents ==="
+          ls -la
           exit 1
         fi
       
     - name: Upload iOS Archive
       uses: actions/upload-artifact@v4
+      if: success()
       with:
         name: ios-archive
-        path: ios/EduConnect.xcarchive
-        if-no-files-found: error
+        path: ios/build/EduConnect.xcarchive
+        retention-days: 7
+        
+    - name: Upload Build Logs
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: ios-build-logs
+        path: ios/build.log
+        retention-days: 7

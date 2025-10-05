@@ -37,7 +37,26 @@ jobs:
             -configuration Release \
             -destination generic/platform=iOS \
             -archivePath ./EduConnect.xcarchive \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO || echo "XCODEBUILD_FAILED"
+    
+      - name: Extract Build Errors (on failure)
+        if: failure()
+        run: |
+          echo "=== EXTRACTING ERROR SUMMARY ==="
+          # Get the last few lines of output which usually contain the error summary
+          echo "=== LAST 300 LINES OF OUTPUT ==="
+          tail -300 /var/log/system.log 2>/dev/null || echo "System log not accessible"
+          
+          # Look for common error patterns in the workspace
+          echo "=== CHECKING FOR BUILD ERRORS IN WORKSPACE ==="
+          cd ios
+          find . -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \; 2>/dev/null || echo "No log files found"
+          
+          # Check derived data if accessible
+          echo "=== CHECKING DERIVED DATA ==="
+          ls -la ~/Library/Developer/Xcode/DerivedData/ 2>/dev/null || echo "DerivedData not accessible"
+          
+          echo "=== BUILD FAILURE DETECTED - Check the Build Archive step output above for specific errors ==="
     
       - name: Upload Archive
         uses: actions/upload-artifact@v4

@@ -19,5 +19,14 @@ target 'EduConnect' do
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
       end
     end
+    
+    # Force all generated specs to use iOS 13.4
+    installer.generated_projects.each do |project|
+      project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+        end
+      end
+    end
   end
 end

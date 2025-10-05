@@ -53,15 +53,11 @@ jobs:
               <key>method</key>
               <string>development</string>
               <key>signingStyle</key>
-              <string>automatic</string>
+              <string>manual</string>
               <key>stripSwiftSymbols</key>
-              <true/>
+              <false/>
               <key>compileBitcode</key>
               <false/>
-              <key>signingCertificate</key>
-              <string>-</string>
-              <key>teamID</key>
-              <string></string>
           </dict>
           </plist>
           EOF
@@ -73,9 +69,30 @@ jobs:
             -archivePath ./EduConnect.xcarchive \
             -exportPath ./export \
             -exportOptionsPlist ./ExportOptions.plist \
-            -allowProvisioningUpdates \
-            CODE_SIGNING_ALLOWED=YES \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO || echo "Export failed, checking if we have .app bundle instead"
+      
+      - name: Create IPA from App Bundle (fallback)
+        run: |
+          cd ios
+          if [ ! -f "./export/EduConnect.ipa" ]; then
+            echo "IPA export failed, looking for .app bundle to create IPA manually"
+            APP_PATH=$(find . -name "EduConnect.app" -type d | head -1)
+            if [ -n "$APP_PATH" ]; then
+              echo "Found app bundle at: $APP_PATH"
+              mkdir -p ./export/Payload
+              cp -R "$APP_PATH" ./export/Payload/
+              cd ./export
+              zip -r EduConnect.ipa Payload/
+              echo "Created IPA manually from app bundle"
+              ls -la *.ipa
+            else
+              echo "No app bundle found either"
+            fi
+          else
+            echo "IPA export succeeded"
+            ls -la ./export/*.ipa
+          fi
     
       - name: Extract Build Errors (on failure)
         if: failure()

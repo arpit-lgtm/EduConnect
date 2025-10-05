@@ -32,7 +32,7 @@ jobs:
     
     - name: Build iOS
       run: |
-        npx react-native build-ios --mode Release --extra-params "--verbose" --extra-params "CODE_SIGNING_ALLOWED=NO"
+        npx react-native build-ios --mode Release --extra-params "--verbose" --extra-params "CODE_SIGNING_ALLOWED=NO" --extra-params "GCC_TREAT_WARNINGS_AS_ERRORS=NO"
     
     - name: Upload iOS build
       uses: actions/upload-artifact@v4

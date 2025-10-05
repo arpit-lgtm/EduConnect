@@ -13,9 +13,20 @@ target 'EduConnect' do
 
   post_install do |installer|
     react_native_post_install(installer, :mac_catalyst_enabled => false)
+    
+    # Force ALL pods to use iOS 13.4 minimum deployment target
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+      end
+    end
+    
+    # Fix ReactAppDependencyProvider specifically
+    installer.generated_projects.each do |project|
+      project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+        end
       end
     end
   end

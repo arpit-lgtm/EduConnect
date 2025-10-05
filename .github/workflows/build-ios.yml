@@ -78,7 +78,14 @@ jobs:
         echo "=== Updating Pod Repo ==="
         pod repo update 2>&1 | tee ../pod-repo-update.log
         echo "=== Running Pod Install ==="
+        set -e  # Exit on any error
         pod install --verbose 2>&1 | tee ../pod-install.log
+        if [ $? -ne 0 ]; then
+          echo "❌ pod install failed"
+          echo "=== Pod Install Log ==="
+          cat ../pod-install.log
+          exit 1
+        fi
         echo "=== Post Pod Install Directory ==="
         ls -la
         

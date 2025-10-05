@@ -11,179 +11,179 @@ jobs:
     runs-on: macos-14  # Xcode 16 on macOS 14, matches RN 0.81.4 requirement
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
     
-    - name: Environment Diagnostics
-      run: |
-        echo "=== System Information ==="
-        sw_vers
-        xcodebuild -version
-        node --version
-        npm --version
-        ruby --version
-        gem --version
-        echo "=== Available Xcode SDKs ==="
-        xcodebuild -showsdks
-        echo "=== Directory Structure ==="
-        ls -la
-        echo "=== iOS Directory ==="
-        ls -la ios/
-    - name: Select Xcode 16
-      shell: bash
-      run: |
-        echo "=== Selecting Xcode 16.x ==="
-        ls -1 /Applications | grep Xcode || true
-        CANDIDATE=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | head -1)
-        if [ -z "$CANDIDATE" ]; then CANDIDATE="/Applications/Xcode.app"; fi
-        sudo xcode-select -s "$CANDIDATE/Contents/Developer"
-        xcodebuild -version
-        V=$(xcodebuild -version | awk '/Xcode/ {print $2}')
-        echo "Detected Xcode $V"
-        if python3 - <<'EOF'
+      - name: Environment Diagnostics
+        run: |
+          echo "=== System Information ==="
+          sw_vers
+          xcodebuild -version
+          node --version
+          npm --version
+          ruby --version
+          gem --version
+          echo "=== Available Xcode SDKs ==="
+          xcodebuild -showsdks
+          echo "=== Directory Structure ==="
+          ls -la
+          echo "=== iOS Directory ==="
+          ls -la ios/
+      - name: Select Xcode 16
+        shell: bash
+        run: |
+          echo "=== Selecting Xcode 16.x ==="
+          ls -1 /Applications | grep Xcode || true
+          CANDIDATE=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | head -1)
+          if [ -z "$CANDIDATE" ]; then CANDIDATE="/Applications/Xcode.app"; fi
+          sudo xcode-select -s "$CANDIDATE/Contents/Developer"
+          xcodebuild -version
+          V=$(xcodebuild -version | awk '/Xcode/ {print $2}')
+          echo "Detected Xcode $V"
+          if python3 - <<'EOF'
 import re, subprocess, pathlib
 out = subprocess.check_output(['xcodebuild','-version']).decode()
 ver = re.search(r'Xcode (\d+\.\d+)', out).group(1)
 print(ver)
 EOF
-        | awk '{ if ($1 < 16.1) print "PATCH"; else print "OK"; }' | grep PATCH >/dev/null; then
-          echo "Xcode <16.1 detected, applying temporary RN version check bypass";
-          UTIL_FILE=node_modules/react-native/scripts/cocoapods/utils.rb
-          if [ -f "$UTIL_FILE" ]; then
-            perl -0777 -i -pe "s/def self.check_minimum_required_xcode.*?end/def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n  Pod::UI.puts '[RN_PATCH_BYPASS] Skipping XCode version check (CI override)'\nend/s" $UTIL_FILE || true
-            grep -n "RN_PATCH_BYPASS" $UTIL_FILE || true
+          | awk '{ if ($1 < 16.1) print "PATCH"; else print "OK"; }' | grep PATCH >/dev/null; then
+            echo "Xcode <16.1 detected, applying temporary RN version check bypass";
+            UTIL_FILE=node_modules/react-native/scripts/cocoapods/utils.rb
+            if [ -f "$UTIL_FILE" ]; then
+              perl -0777 -i -pe "s/def self.check_minimum_required_xcode.*?end/def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n  Pod::UI.puts '[RN_PATCH_BYPASS] Skipping XCode version check (CI override)'\nend/s" $UTIL_FILE || true
+              grep -n "RN_PATCH_BYPASS" $UTIL_FILE || true
+            else
+              echo "utils.rb not found for patch";
+            fi
           else
-            echo "utils.rb not found for patch";
+            echo "Xcode version OK (>=16.1).";
           fi
-        else
-          echo "Xcode version OK (>=16.1).";
-        fi
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
     
-    - name: Install Node dependencies
-      run: |
-        echo "=== Installing Node Dependencies ==="
-        npm install 2>&1 | tee npm-install.log
-        echo "=== Verifying React Native ==="
-        npm list react-native
-        npm list @react-native-community/cli-platform-ios
-        echo "=== Checking React Native Scripts ==="
-        ls -la node_modules/react-native/scripts/
-        echo "=== Node Modules React Native Check ==="
-        if [ -f "node_modules/react-native/scripts/react_native_pods.rb" ]; then
-          echo "✅ react_native_pods.rb found"
-        else
-          echo "❌ react_native_pods.rb missing"
-          exit 1
-        fi
-    # Removed custom patching – relying on proper Xcode version instead
+      - name: Install Node dependencies
+        run: |
+          echo "=== Installing Node Dependencies ==="
+          npm install 2>&1 | tee npm-install.log
+          echo "=== Verifying React Native ==="
+          npm list react-native
+          npm list @react-native-community/cli-platform-ios
+          echo "=== Checking React Native Scripts ==="
+          ls -la node_modules/react-native/scripts/
+          echo "=== Node Modules React Native Check ==="
+          if [ -f "node_modules/react-native/scripts/react_native_pods.rb" ]; then
+            echo "✅ react_native_pods.rb found"
+          else
+            echo "❌ react_native_pods.rb missing"
+            exit 1
+          fi
+      # Removed custom patching – relying on proper Xcode version instead
     
-    - name: Ruby Environment Setup
-      run: |
-        echo "=== Ruby Environment ==="
-        ruby --version
-        gem --version
-        gem env
-        echo "=== Installing Bundler ==="
-        gem install bundler
+      - name: Ruby Environment Setup
+        run: |
+          echo "=== Ruby Environment ==="
+          ruby --version
+          gem --version
+          gem env
+          echo "=== Installing Bundler ==="
+          gem install bundler
         
-    - name: CocoaPods Installation
-      run: |
-        echo "=== Installing CocoaPods ==="
-        gem install cocoapods 2>&1 | tee cocoapods-install.log
-        pod --version
-        echo "=== CocoaPods Environment ==="
-        pod env
+      - name: CocoaPods Installation
+        run: |
+          echo "=== Installing CocoaPods ==="
+          gem install cocoapods 2>&1 | tee cocoapods-install.log
+          pod --version
+          echo "=== CocoaPods Environment ==="
+          pod env
         
-    - name: iOS Dependencies Preparation
-      run: |
-        cd ios
-        echo "=== Current iOS Directory ==="
-        ls -la
-        echo "=== Cleaning Previous Pods ==="
-        rm -rf Pods Podfile.lock
-        echo "=== Podfile Content ==="
-        cat Podfile
+      - name: iOS Dependencies Preparation
+        run: |
+          cd ios
+          echo "=== Current iOS Directory ==="
+          ls -la
+          echo "=== Cleaning Previous Pods ==="
+          rm -rf Pods Podfile.lock
+          echo "=== Podfile Content ==="
+          cat Podfile
         
         
-    - name: Pod Install
-      run: |
-        cd ios
-        echo "=== Installing Pods ==="
-        pod install --verbose
+      - name: Pod Install
+        run: |
+          cd ios
+          echo "=== Installing Pods ==="
+          pod install --verbose
         
-    - name: Xcode Workspace Verification
-      run: |
-        cd ios
-        echo "=== Verifying Workspace Creation ==="
-        if [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
-          echo "✅ Workspace created successfully"
-          cat EduConnect.xcworkspace/contents.xcworkspacedata
-        else
-          echo "❌ Workspace not created"
-          exit 1
-        fi
-        echo "=== Pods Directory Contents ==="
-        ls -la Pods/ | head -20
+      - name: Xcode Workspace Verification
+        run: |
+          cd ios
+          echo "=== Verifying Workspace Creation ==="
+          if [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
+            echo "✅ Workspace created successfully"
+            cat EduConnect.xcworkspace/contents.xcworkspacedata
+          else
+            echo "❌ Workspace not created"
+            exit 1
+          fi
+          echo "=== Pods Directory Contents ==="
+          ls -la Pods/ | head -20
         
-    - name: Build iOS App (Archive)
-      run: |
-        cd ios
-        echo "=== Starting Xcode Build ==="
-        xcodebuild clean \
-                  -workspace EduConnect.xcworkspace \
-                  -scheme EduConnect \
-                  -configuration Release 2>&1 | tee ../xcode-clean.log
-                  
-        echo "=== Building Archive ==="
-        xcodebuild archive \
-                  -workspace EduConnect.xcworkspace \
-                  -scheme EduConnect \
-                  -configuration Release \
-                  -destination generic/platform=iOS \
-                  -archivePath ./build/EduConnect.xcarchive \
-                  CODE_SIGNING_ALLOWED=NO \
-                  CODE_SIGNING_REQUIRED=NO \
-                  CODE_SIGN_IDENTITY="" \
-                  PROVISIONING_PROFILE="" \
-                  DEVELOPMENT_TEAM="" \
-                  2>&1 | tee ../xcode-build.log
+      - name: Build iOS App (Archive)
+        run: |
+          cd ios
+          echo "=== Starting Xcode Build ==="
+          xcodebuild clean \
+                    -workspace EduConnect.xcworkspace \
+                    -scheme EduConnect \
+                    -configuration Release 2>&1 | tee ../xcode-clean.log
+          
+          echo "=== Building Archive ==="
+          xcodebuild archive \
+                    -workspace EduConnect.xcworkspace \
+                    -scheme EduConnect \
+                    -configuration Release \
+                    -destination generic/platform=iOS \
+                    -archivePath ./build/EduConnect.xcarchive \
+                    CODE_SIGNING_ALLOWED=NO \
+                    CODE_SIGNING_REQUIRED=NO \
+                    CODE_SIGN_IDENTITY="" \
+                    PROVISIONING_PROFILE="" \
+                    DEVELOPMENT_TEAM="" \
+                    2>&1 | tee ../xcode-build.log
     
-    - name: Verify Build Output
-      run: |
-        cd ios
-        echo "=== Build Verification ==="
-        if [ -d "./build/EduConnect.xcarchive" ]; then
-          echo "✅ iOS Archive created successfully!"
-          ls -la ./build/EduConnect.xcarchive/
-          find ./build/EduConnect.xcarchive -name "*.app" -exec ls -la {} \;
-        else
-          echo "❌ iOS Archive not found. Build failed."
-          echo "=== Available files ==="
-          find . -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \;
-          exit 1
-        fi
+      - name: Verify Build Output
+        run: |
+          cd ios
+          echo "=== Build Verification ==="
+          if [ -d "./build/EduConnect.xcarchive" ]; then
+            echo "✅ iOS Archive created successfully!"
+            ls -la ./build/EduConnect.xcarchive/
+            find ./build/EduConnect.xcarchive -name "*.app" -exec ls -la {} \;
+          else
+            echo "❌ iOS Archive not found. Build failed."
+            echo "=== Available files ==="
+            find . -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \;
+            exit 1
+          fi
       
-    - name: Upload iOS Archive
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: ios-archive
-        path: ios/build/EduConnect.xcarchive
-        retention-days: 7
+      - name: Upload iOS Archive
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ios-archive
+          path: ios/build/EduConnect.xcarchive
+          retention-days: 7
         
-    - name: Upload All Logs (Success or Failure)
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: ios-build-logs
-        path: |
-          npm-install.log
-          xcode-clean.log
-          xcode-build.log
-        retention-days: 7
+      - name: Upload All Logs (Success or Failure)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-build-logs
+          path: |
+            npm-install.log
+            xcode-clean.log
+            xcode-build.log
+          retention-days: 7

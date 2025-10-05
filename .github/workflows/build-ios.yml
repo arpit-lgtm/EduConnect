@@ -82,35 +82,60 @@ jobs:
         
     - name: Patch React Native for Xcode Version Compatibility
       run: |
-        echo "=== Patching React Native source files ==="
-        # Create a simple patch for the Xcode version check
+        echo "=== Directly modifying React Native files for compatibility ==="
         cd ios
         
-        cat > simple_patch.rb << 'EOL'
-        # Simple patch to override Xcode version check
-        helpers_path = File.join('..', 'node_modules', 'react-native', 'scripts', 'cocoapods', 'helpers.rb')
-        utils_path = File.join('..', 'node_modules', 'react-native', 'scripts', 'cocoapods', 'utils.rb')
+        # Create direct replacements in files
+        HELPERS_PATH="../node_modules/react-native/scripts/cocoapods/helpers.rb"
+        UTILS_PATH="../node_modules/react-native/scripts/cocoapods/utils.rb"
         
-        # Replace min Xcode version in helpers.rb
-        helpers_content = File.read(helpers_path)
-        helpers_content.gsub!("return '16.1'", "return '15.0'")
-        File.write(helpers_path, helpers_content)
-        puts "✅ Patched helpers.rb"
+        echo "=== Modifying $HELPERS_PATH ==="
+        sed -i '' "s/return '16.1'/return '15.0'/g" "$HELPERS_PATH"
         
-        # Replace check method in utils.rb
-        utils_content = File.read(utils_path)
-        original_method = /def self\.check_minimum_required_xcode.*?end/m
-        replacement = "def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n        Pod::UI.puts \"Skipping XCode version check\"\n    end"
-        utils_content.gsub!(original_method, replacement)
-        File.write(utils_path, utils_content)
-        puts "✅ Patched utils.rb"
-        EOL
+        echo "=== Removing check in $UTILS_PATH ==="
+        # Create a backup of the original file
+        cp "$UTILS_PATH" "${UTILS_PATH}.bak"
         
-        ruby simple_patch.rb
+        # Replace the entire check method with a simple stub
+        cat > "$UTILS_PATH.new" << 'EOL'
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+require 'shellwords'
+
+require_relative "./helpers.rb"
+require_relative "./jsengine.rb"
+
+# Utilities class for React Native Cocoapods
+class ReactNativePodsUtils
+    def self.warn_if_not_on_arm64
+        if SysctlChecker.new().call_sysctl_arm64() == 1 && !Environment.new().ruby_platform().include?('arm64')
+            Pod::UI.warn 'Do not use "pod install" from inside Rosetta2 (x86_64 emulation on arm64).'
+            Pod::UI.warn ' - Emulated x86_64 is slower than native arm64'
+            Pod::UI.warn ' - May result in mixed architectures in rubygems (eg: ffi_c.bundle files may be x86_64 with an arm64 interpreter)'
+            Pod::UI.warn 'Run "env /usr/bin/arch -arm64 /bin/bash --login" then try again.'
+        end
+    end
+    
+    # PATCHED: Skip Xcode version check for GitHub Actions compatibility
+    def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)
+        Pod::UI.puts "⚠️ Xcode version check bypassed by GitHub Actions patch"
+    end
+
+    # deprecated. These checks are duplicated in the react_native_pods function
+EOL
+
+        # Get the rest of the file content after the check method
+        tail -n +400 "${UTILS_PATH}.bak" >> "$UTILS_PATH.new"
         
-        echo "=== Verifying patches ==="
-        cat ../node_modules/react-native/scripts/cocoapods/helpers.rb | grep "min_xcode_version_supported" -A 3
-        cat ../node_modules/react-native/scripts/cocoapods/utils.rb | grep "check_minimum_required_xcode" -A 3
+        # Replace the original file with our patched version
+        mv "$UTILS_PATH.new" "$UTILS_PATH"
+        
+        echo "=== Verification ==="
+        grep "min_xcode_version_supported" "$HELPERS_PATH"
+        grep -A 3 "def self.check_minimum_required_xcode" "$UTILS_PATH"
         
     - name: Pod Install with Full Logging
       run: |

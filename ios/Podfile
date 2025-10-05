@@ -1,9 +1,9 @@
 # Podfile for React Native 0.81.4 with Xcode 15.4 compatibility
-# Require the React Native pods first
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-
-# Create a Podfile.prepend approach instead of monkey patching
+# Set environment variable for patching
 ENV['IGNORE_XCODE_VERSION'] = '1'
+
+# Standard Podfile for React Native
+require_relative '../node_modules/react-native/scripts/react_native_pods'
 
 platform :ios, '13.4'
 install! 'cocoapods', :deterministic_uuids => false

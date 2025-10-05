@@ -98,6 +98,9 @@ jobs:
         export RCT_METRO_PORT=8081
         export RCT_NEW_ARCH_ENABLED=0
         export SKIP_BUNDLING=1
+        echo "=== Setting environment variables to bypass Xcode version check ==="
+        export IGNORE_XCODE_VERSION=1
+        
         echo "=== Running Pod Install (Attempt 1) ==="
         set +e  # Don't exit on error yet
         pod install --verbose 2>&1 | tee ../pod-install.log

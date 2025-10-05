@@ -14,51 +14,98 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
+    - name: Environment Diagnostics
+      run: |
+        echo "=== System Information ==="
+        sw_vers
+        xcodebuild -version
+        node --version
+        npm --version
+        ruby --version
+        gem --version
+        echo "=== Available Xcode SDKs ==="
+        xcodebuild -showsdks
+        echo "=== Directory Structure ==="
+        ls -la
+        echo "=== iOS Directory ==="
+        ls -la ios/
+    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
     
     - name: Install Node dependencies
       run: |
-        npm install
+        echo "=== Installing Node Dependencies ==="
+        npm install 2>&1 | tee npm-install.log
+        echo "=== Verifying React Native ==="
         npm list react-native
+        echo "=== Node Modules Check ==="
+        ls -la node_modules/react-native/ | head -20
     
-    - name: Setup Ruby and Bundler
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.0'
-        bundler-cache: true
-        working-directory: ios
-    
-    - name: Install CocoaPods
+    - name: Ruby Environment Setup
       run: |
-        cd ios
-        gem install cocoapods
-        pod --version
+        echo "=== Ruby Environment ==="
+        ruby --version
+        gem --version
+        gem env
+        echo "=== Installing Bundler ==="
+        gem install bundler
         
-    - name: Clean and Install iOS dependencies
+    - name: CocoaPods Installation
+      run: |
+        echo "=== Installing CocoaPods ==="
+        gem install cocoapods 2>&1 | tee cocoapods-install.log
+        pod --version
+        echo "=== CocoaPods Environment ==="
+        pod env
+        
+    - name: iOS Dependencies Preparation
       run: |
         cd ios
+        echo "=== Current iOS Directory ==="
+        ls -la
+        echo "=== Cleaning Previous Pods ==="
         rm -rf Pods Podfile.lock
-        pod repo update
-        pod install --verbose
+        echo "=== Podfile Content ==="
+        cat Podfile
+        
+    - name: Pod Install with Full Logging
+      run: |
+        cd ios
+        echo "=== Updating Pod Repo ==="
+        pod repo update 2>&1 | tee ../pod-repo-update.log
+        echo "=== Running Pod Install ==="
+        pod install --verbose 2>&1 | tee ../pod-install.log
+        echo "=== Post Pod Install Directory ==="
         ls -la
         
-    - name: List Xcode versions
+    - name: Xcode Workspace Verification
       run: |
-        xcodebuild -version
-        xcrun simctl list runtimes
+        cd ios
+        echo "=== Verifying Workspace Creation ==="
+        if [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
+          echo "✅ Workspace created successfully"
+          cat EduConnect.xcworkspace/contents.xcworkspacedata
+        else
+          echo "❌ Workspace not created"
+          exit 1
+        fi
+        echo "=== Pods Directory Contents ==="
+        ls -la Pods/ | head -20
         
     - name: Build iOS App (Archive)
       run: |
         cd ios
+        echo "=== Starting Xcode Build ==="
         xcodebuild clean \
                   -workspace EduConnect.xcworkspace \
                   -scheme EduConnect \
-                  -configuration Release
+                  -configuration Release 2>&1 | tee ../xcode-clean.log
                   
+        echo "=== Building Archive ==="
         xcodebuild archive \
                   -workspace EduConnect.xcworkspace \
                   -scheme EduConnect \
@@ -70,21 +117,20 @@ jobs:
                   CODE_SIGN_IDENTITY="" \
                   PROVISIONING_PROFILE="" \
                   DEVELOPMENT_TEAM="" \
-                  | tee build.log
+                  2>&1 | tee ../xcode-build.log
     
     - name: Verify Build Output
       run: |
         cd ios
+        echo "=== Build Verification ==="
         if [ -d "./build/EduConnect.xcarchive" ]; then
           echo "✅ iOS Archive created successfully!"
           ls -la ./build/EduConnect.xcarchive/
           find ./build/EduConnect.xcarchive -name "*.app" -exec ls -la {} \;
         else
-          echo "❌ iOS Archive not found. Build may have failed."
-          echo "=== Build Log (last 100 lines) ==="
-          tail -100 build.log || echo "No build log found"
-          echo "=== Workspace contents ==="
-          ls -la
+          echo "❌ iOS Archive not found. Build failed."
+          echo "=== Available files ==="
+          find . -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \;
           exit 1
         fi
       
@@ -96,10 +142,16 @@ jobs:
         path: ios/build/EduConnect.xcarchive
         retention-days: 7
         
-    - name: Upload Build Logs
+    - name: Upload All Logs (Success or Failure)
       uses: actions/upload-artifact@v4
-      if: failure()
+      if: always()
       with:
         name: ios-build-logs
-        path: ios/build.log
+        path: |
+          npm-install.log
+          cocoapods-install.log
+          pod-repo-update.log
+          pod-install.log
+          xcode-clean.log
+          xcode-build.log
         retention-days: 7

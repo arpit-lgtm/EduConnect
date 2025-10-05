@@ -1,0 +1,74 @@
+name: Test iOS Environment
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  test-environment:
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Test Basic Environment
+      run: |
+        echo "=== macOS Version ==="
+        sw_vers
+        echo "=== Xcode Version ==="
+        xcodebuild -version
+        echo "=== Available SDKs ==="
+        xcodebuild -showsdks | grep iOS
+        
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Test Node Environment
+      run: |
+        echo "=== Node Version ==="
+        node --version
+        npm --version
+        echo "=== React Native CLI Test ==="
+        npx react-native --version
+        
+    - name: Test Package Installation
+      run: |
+        echo "=== Installing packages ==="
+        npm install
+        echo "=== Listing key packages ==="
+        npm list react-native
+        npm list @react-native-community/cli-platform-ios
+        
+    - name: Test CocoaPods Environment
+      run: |
+        echo "=== Ruby Version ==="
+        ruby --version
+        echo "=== Installing CocoaPods ==="
+        gem install cocoapods
+        echo "=== CocoaPods Version ==="
+        pod --version
+        echo "=== CocoaPods Environment ==="
+        pod env
+        
+    - name: Test iOS Project Structure
+      run: |
+        cd ios
+        echo "=== iOS Directory Contents ==="
+        ls -la
+        echo "=== Podfile Contents ==="
+        cat Podfile
+        echo "=== Testing Pod Spec ==="
+        pod spec lint --quick ../package.json 2>/dev/null || echo "No pod spec found (normal for RN)"
+        
+    - name: Minimal Pod Install Test
+      run: |
+        cd ios
+        echo "=== Attempting minimal pod install ==="
+        pod install --verbose 2>&1 | head -50
+        
+    - name: Report Results
+      run: |
+        echo "=== Environment Test Complete ==="
+        echo "If this workflow succeeds, the environment is ready for iOS builds"

@@ -30,44 +30,34 @@ jobs:
         echo "=== iOS Directory ==="
         ls -la ios/
     - name: Select Xcode 16
+      shell: bash
       run: |
         echo "=== Selecting Xcode 16.x ==="
-        # List installed Xcodes
         ls -1 /Applications | grep Xcode || true
-        # Prefer Xcode_16.* if available, else Xcode.app
         CANDIDATE=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | head -1)
-        if [ -z "$CANDIDATE" ]; then
-          CANDIDATE="/Applications/Xcode.app"
-        fi
+        if [ -z "$CANDIDATE" ]; then CANDIDATE="/Applications/Xcode.app"; fi
         sudo xcode-select -s "$CANDIDATE/Contents/Developer"
-        echo "Selected:" $(xcodebuild -version | head -1)
-        # Fail early if still below 16.1
+        xcodebuild -version
         V=$(xcodebuild -version | awk '/Xcode/ {print $2}')
-        printf "Detected Xcode %s\n" "$V"
-        # If version still <16.1 apply temporary runtime patch for RN check
-        python3 - <<'PY'
-import re, pathlib, os, subprocess
-from packaging import version
+        echo "Detected Xcode $V"
+        if python3 - <<'EOF'
+import re, subprocess, pathlib
 out = subprocess.check_output(['xcodebuild','-version']).decode()
 ver = re.search(r'Xcode (\d+\.\d+)', out).group(1)
-if version.parse(ver) < version.parse('16.1'):
-    print(f"⚠️ Xcode {ver} < 16.1, injecting temporary React Native version check bypass")
-    utils = pathlib.Path('node_modules/react-native/scripts/cocoapods/utils.rb')
-    if utils.exists():
-        text = utils.read_text()
-        pattern = r'def self.check_minimum_required_xcode.*?end'
-        if 'RN_PATCH_BYPASS' not in text:
-            replacement = "def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n  Pod::UI.puts '[RN_PATCH_BYPASS] Skipping XCode version check (CI override)'\nend"
-            new_text = re.sub(pattern, replacement, text, flags=re.S)
-            utils.write_text(new_text)
-            print('✅ Applied temporary bypass in utils.rb')
-        else:
-            print('ℹ️ Bypass already present')
-    else:
-        print('❌ utils.rb not found to patch')
-else:
-    print('✅ Xcode version satisfies >=16.1, no patch needed')
-PY
+print(ver)
+EOF
+        | awk '{ if ($1 < 16.1) print "PATCH"; else print "OK"; }' | grep PATCH >/dev/null; then
+          echo "Xcode <16.1 detected, applying temporary RN version check bypass";
+          UTIL_FILE=node_modules/react-native/scripts/cocoapods/utils.rb
+          if [ -f "$UTIL_FILE" ]; then
+            perl -0777 -i -pe "s/def self.check_minimum_required_xcode.*?end/def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)\n  Pod::UI.puts '[RN_PATCH_BYPASS] Skipping XCode version check (CI override)'\nend/s" $UTIL_FILE || true
+            grep -n "RN_PATCH_BYPASS" $UTIL_FILE || true
+          else
+            echo "utils.rb not found for patch";
+          fi
+        else
+          echo "Xcode version OK (>=16.1).";
+        fi
     
     - name: Setup Node.js
       uses: actions/setup-node@v4

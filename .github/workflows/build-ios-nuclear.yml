@@ -37,7 +37,45 @@ jobs:
             -configuration Release \
             -destination generic/platform=iOS \
             -archivePath ./EduConnect.xcarchive \
-            CODE_SIGNING_ALLOWED=NO || echo "XCODEBUILD_FAILED"
+            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+      
+      - name: Create Export Options Plist
+        run: |
+          cd ios
+          cat > ExportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>development</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+              <key>signingCertificate</key>
+              <string>-</string>
+              <key>teamID</key>
+              <string></string>
+          </dict>
+          </plist>
+          EOF
+      
+      - name: Export IPA
+        run: |
+          cd ios
+          xcodebuild -exportArchive \
+            -archivePath ./EduConnect.xcarchive \
+            -exportPath ./export \
+            -exportOptionsPlist ./ExportOptions.plist \
+            -allowProvisioningUpdates \
+            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGNING_REQUIRED=NO
     
       - name: Extract Build Errors (on failure)
         if: failure()
@@ -68,11 +106,11 @@ jobs:
           echo "=== WORKSPACE BUILD DIRECTORY ==="
           ls -la build/ 2>/dev/null || echo "No build directory"
           
-      - name: Upload Build Products
+      - name: Upload iOS IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ios-nuclear-build-products
+          name: ios-ipa-file
           path: |
-            ios/build/
-            ~/Library/Developer/Xcode/DerivedData/**/Build/Products/**/EduConnect.app
+            ios/export/*.ipa
+            ios/EduConnect.xcarchive
         if-no-files-found: warn

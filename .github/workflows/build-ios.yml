@@ -42,8 +42,16 @@ jobs:
         npm install 2>&1 | tee npm-install.log
         echo "=== Verifying React Native ==="
         npm list react-native
-        echo "=== Node Modules Check ==="
-        ls -la node_modules/react-native/ | head -20
+        npm list @react-native-community/cli-platform-ios
+        echo "=== Checking React Native Scripts ==="
+        ls -la node_modules/react-native/scripts/
+        echo "=== Node Modules React Native Check ==="
+        if [ -f "node_modules/react-native/scripts/react_native_pods.rb" ]; then
+          echo "✅ react_native_pods.rb found"
+        else
+          echo "❌ react_native_pods.rb missing"
+          exit 1
+        fi
     
     - name: Ruby Environment Setup
       run: |
@@ -75,16 +83,37 @@ jobs:
     - name: Pod Install with Full Logging
       run: |
         cd ios
+        echo "=== Cleaning Pod Cache ==="
+        pod cache clean --all
+        rm -rf ~/Library/Caches/CocoaPods
+        rm -rf Pods Podfile.lock
         echo "=== Updating Pod Repo ==="
         pod repo update 2>&1 | tee ../pod-repo-update.log
-        echo "=== Running Pod Install ==="
-        set -e  # Exit on any error
+        echo "=== Checking Podfile Syntax ==="
+        ruby -c Podfile
+        echo "=== Running Pod Install (Attempt 1) ==="
+        set +e  # Don't exit on error yet
         pod install --verbose 2>&1 | tee ../pod-install.log
-        if [ $? -ne 0 ]; then
-          echo "❌ pod install failed"
-          echo "=== Pod Install Log ==="
-          cat ../pod-install.log
-          exit 1
+        POD_EXIT_CODE=$?
+        
+        if [ $POD_EXIT_CODE -eq 0 ] && [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
+          echo "✅ Pod install succeeded"
+        else
+          echo "❌ Pod install failed (exit code: $POD_EXIT_CODE)"
+          echo "=== Trying alternative approach ==="
+          pod install --repo-update --verbose 2>&1 | tee ../pod-install-alt.log
+          ALT_EXIT_CODE=$?
+          
+          if [ $ALT_EXIT_CODE -eq 0 ] && [ -f "EduConnect.xcworkspace/contents.xcworkspacedata" ]; then
+            echo "✅ Alternative pod install succeeded"
+          else
+            echo "❌ Both pod install attempts failed"
+            echo "=== Pod Install Log ==="
+            cat ../pod-install.log
+            echo "=== Alternative Pod Install Log ==="
+            cat ../pod-install-alt.log
+            exit 1
+          fi
         fi
         echo "=== Post Pod Install Directory ==="
         ls -la

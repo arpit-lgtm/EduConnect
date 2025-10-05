@@ -87,6 +87,9 @@ jobs:
         pod cache clean --all
         rm -rf ~/Library/Caches/CocoaPods
         rm -rf Pods Podfile.lock
+        echo "=== Xcode Setup ==="
+        export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
+        xcodebuild -version
         echo "=== Updating Pod Repo ==="
         pod repo update 2>&1 | tee ../pod-repo-update.log
         echo "=== Checking Podfile Syntax ==="
@@ -104,9 +107,8 @@ jobs:
           echo "✅ Pod install succeeded"
         else
           echo "❌ Pod install failed (exit code: $POD_EXIT_CODE)"
-          echo "=== Trying with Xcode version override ==="
-          export DEVELOPER_DIR="/Applications/Xcode_15.4.app/Contents/Developer"
-          export XCODE_VERSION_OVERRIDE="15.4"
+          echo "=== Trying with deployment target override ==="
+          export IPHONEOS_DEPLOYMENT_TARGET="13.4"
           pod install --repo-update --verbose 2>&1 | tee ../pod-install-alt.log
           ALT_EXIT_CODE=$?
           

@@ -1,52 +1,105 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>EduConnect</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>arm64</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-</dict>
+<?xml version="1.0" encoding="UTF-8"?><?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
+<plist version="1.0"><plist version="1.0">
+
+<dict><dict>
+
+  <key>CFBundleDevelopmentRegion</key>	<key>CFBundleDevelopmentRegion</key>
+
+  <string>en</string>	<string>en</string>
+
+  <key>CFBundleDisplayName</key>	<key>CFBundleDisplayName</key>
+
+  <string>EduConnect</string>	<string>EduConnect</string>
+
+  <key>CFBundleExecutable</key>	<key>CFBundleExecutable</key>
+
+  <string>$(EXECUTABLE_NAME)</string>	<string>$(EXECUTABLE_NAME)</string>
+
+  <key>CFBundleIdentifier</key>	<key>CFBundleIdentifier</key>
+
+  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+  <key>CFBundleInfoDictionaryVersion</key>	<key>CFBundleInfoDictionaryVersion</key>
+
+  <string>6.0</string>	<string>6.0</string>
+
+  <key>CFBundleName</key>	<key>CFBundleName</key>
+
+  <string>$(PRODUCT_NAME)</string>	<string>$(PRODUCT_NAME)</string>
+
+  <key>CFBundlePackageType</key>	<key>CFBundlePackageType</key>
+
+  <string>APPL</string>	<string>APPL</string>
+
+  <key>CFBundleShortVersionString</key>	<key>CFBundleShortVersionString</key>
+
+  <string>$(MARKETING_VERSION)</string>	<string>$(MARKETING_VERSION)</string>
+
+  <key>CFBundleSignature</key>	<key>CFBundleSignature</key>
+
+  <string>????</string>	<string>????</string>
+
+  <key>CFBundleVersion</key>	<key>CFBundleVersion</key>
+
+  <string>$(CURRENT_PROJECT_VERSION)</string>	<string>$(CURRENT_PROJECT_VERSION)</string>
+
+  <key>LSRequiresIPhoneOS</key>	<key>LSRequiresIPhoneOS</key>
+
+  <true/>	<true/>
+
+  <key>NSAppTransportSecurity</key>	<key>NSAppTransportSecurity</key>
+
+  <dict>	<dict>
+
+    <key>NSExceptionDomains</key>	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
+
+    <dict>		<key>NSAllowsArbitraryLoads</key>
+
+      <key>localhost</key>		<false/>
+
+      <dict>		<key>NSAllowsLocalNetworking</key>
+
+        <key>NSExceptionAllowsInsecureHTTPLoads</key>		<true/>
+
+        <true/>	</dict>
+
+      </dict>	<key>NSLocationWhenInUseUsageDescription</key>
+
+    </dict>	<string></string>
+
+  </dict>	<key>UILaunchStoryboardName</key>
+
+  <key>UILaunchStoryboardName</key>	<string>LaunchScreen</string>
+
+  <string>LaunchScreen</string>	<key>UIRequiredDeviceCapabilities</key>
+
+  <key>UIRequiredDeviceCapabilities</key>	<array>
+
+  <array>		<string>arm64</string>
+
+    <string>armv7</string>	</array>
+
+  </array>	<key>UISupportedInterfaceOrientations</key>
+
+  <key>UISupportedInterfaceOrientations</key>	<array>
+
+  <array>		<string>UIInterfaceOrientationPortrait</string>
+
+    <string>UIInterfaceOrientationPortrait</string>		<string>UIInterfaceOrientationLandscapeLeft</string>
+
+    <string>UIInterfaceOrientationLandscapeLeft</string>		<string>UIInterfaceOrientationLandscapeRight</string>
+
+    <string>UIInterfaceOrientationLandscapeRight</string>	</array>
+
+  </array>	<key>UIViewControllerBasedStatusBarAppearance</key>
+
+  <key>UIViewControllerBasedStatusBarAppearance</key>	<false/>
+
+  <false/></dict>
+
+</dict></plist>
+
 </plist>

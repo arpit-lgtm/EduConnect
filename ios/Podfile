@@ -1,28 +1,74 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'require_relative '../node_modules/react-native/scripts/react_native_pods'
+
+
+
+platform :ios, '13.4'require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+
+
+target 'EduConnect' doplatform :ios, '13.4'
+
+  config = use_native_modules!
 
 platform :ios, '13.4'
 
-target 'EduConnect' do
+  use_react_native!(
+
+    :path => config[:reactNativePath],target 'EduConnect' do
+
+    :hermes_enabled => true,
+
+    :fabric_enabled => falsetarget 'EduConnect' do  config = use_native_modules!
+
+  )
+
   config = use_native_modules!
 
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :fabric_enabled => false
+  post_install do |installer|
+
+    react_native_post_install(installer)  use_react_native!(
+
+    
+
+    installer.pods_project.targets.each do |target|  use_react_native!(    :path => config[:reactNativePath],
+
+      target.build_configurations.each do |config|
+
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'    :path => config[:reactNativePath],    :hermes_enabled => true,
+
+      end
+
+    end    :hermes_enabled => true,    :fabric_enabled => false
+
+  end
+
+end    :fabric_enabled => false  )
+
   )
 
   post_install do |installer|
-    react_native_post_install(installer, :mac_catalyst_enabled => false)
-    
-    # Force ALL pods to use iOS 13.4 minimum deployment target
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
-      end
-    end
-    
-    # Fix ReactAppDependencyProvider specifically
-    installer.generated_projects.each do |project|
+
+  post_install do |installer|    react_native_post_install(installer, :mac_catalyst_enabled => false)
+
+    react_native_post_install(installer)    
+
+        # Force ALL pods to use iOS 13.4 minimum deployment target
+
+    # Force all targets to use iOS 13.4 deployment target    installer.pods_project.targets.each do |target|
+
+    installer.pods_project.targets.each do |target|      target.build_configurations.each do |config|
+
+      target.build_configurations.each do |config|        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'      end
+
+      end    end
+
+    end    
+
+  end    # Fix ReactAppDependencyProvider specifically
+
+end    installer.generated_projects.each do |project|
       project.targets.each do |target|
         target.build_configurations.each do |config|
           config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'

@@ -52,6 +52,14 @@ jobs:
           echo "❌ react_native_pods.rb missing"
           exit 1
         fi
+    - name: Patch React Native Xcode Requirement
+      run: |
+        echo "=== Patching React Native Xcode requirement ==="
+        ruby scripts/patch_xcode_version.rb || { echo "Patch script failed"; cat scripts/patch_xcode_version.rb; exit 1; }
+        echo "--- helpers.rb excerpt ---"
+        grep -n "min_xcode_version_supported" node_modules/react-native/scripts/cocoapods/helpers.rb || true
+        echo "--- utils.rb excerpt ---"
+        grep -n "check_minimum_required_xcode" node_modules/react-native/scripts/cocoapods/utils.rb || true
     
     - name: Ruby Environment Setup
       run: |
@@ -80,43 +88,6 @@ jobs:
         echo "=== Podfile Content ==="
         cat Podfile
         
-    - name: Patch React Native for Xcode Version Compatibility
-      run: |
-        echo "=== Directly modifying React Native files for compatibility ==="
-        cd ios
-        
-        # Create direct replacements in files
-        HELPERS_PATH="../node_modules/react-native/scripts/cocoapods/helpers.rb"
-        UTILS_PATH="../node_modules/react-native/scripts/cocoapods/utils.rb"
-        
-        echo "=== Modifying $HELPERS_PATH ==="
-        sed -i '' "s/return '16.1'/return '15.0'/g" "$HELPERS_PATH"
-        
-        echo "=== Creating simplified utils.rb patch ==="
-        # Create a backup of the original file
-        cp "$UTILS_PATH" "${UTILS_PATH}.bak"
-        
-        # Create a simple replacement method using a different approach
-        python3 -c "
-import re
-with open('${UTILS_PATH}.bak', 'r') as f:
-    content = f.read()
-
-# Replace the check method with a simple version
-pattern = r'def self\.check_minimum_required_xcode.*?end'
-replacement = '''def self.check_minimum_required_xcode(xcodebuild_manager: Xcodebuild)
-        Pod::UI.puts \"Xcode version check bypassed by GitHub Actions patch\"
-    end'''
-
-new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
-
-with open('$UTILS_PATH', 'w') as f:
-    f.write(new_content)
-"
-        
-        echo "=== Verification ==="
-        grep "min_xcode_version_supported" "$HELPERS_PATH" || echo "Pattern not found"
-        grep -A 3 "def self.check_minimum_required_xcode" "$UTILS_PATH" || echo "Pattern not found"
         
     - name: Pod Install with Full Logging
       run: |
